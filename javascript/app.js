@@ -5,6 +5,7 @@ $(document).ready(function() {
 
   //initial function to render the given buttons
   function renderButtons() {
+    console.log(topics);
     $("#topicButton").empty();
     for (var i = 0; i < topics.length; i++) {
       $("#topicButton").append("<button class='topic'>"
@@ -15,6 +16,14 @@ $(document).ready(function() {
   function splitValue(value, index) {
     return [value.substring(0, index),value.substring(index)];
   }
+
+  $("#add-topic").on("click",function (event) {
+    event.preventDefault();
+    var topic = $("#topic-input").val();
+    $("#topic-input").val("");
+    topics.push(topic);
+    renderButtons();
+  });
 
   $("#topicButton").on("click","button.topic", function () {
     //get the topic name from the button then set up the queryUrl
@@ -28,7 +37,7 @@ $(document).ready(function() {
       method: "GET"
     }).then(function (data) {
       $("#dump").empty();
-
+      console.log(data);
       //traverse the json info and print the images
       for (var i = 0; i < data.data.length; i++) {
         //get imageUrl then split it to the url and the extension
@@ -38,9 +47,12 @@ $(document).ready(function() {
         //replace the extension with _s.gif then join the url
         split[1]="_s.gif";
         split = split.join('');
-
+        var p = $("<p>");
+        p.append("Rated: " + data.data[i].rating);
         //display the images on the page
         $("#dump").append("<img data-state='still' id='gif' class='gifs' src='"+split+"'>");
+        $("#dump").append(p);
+
       }
     });
   });
